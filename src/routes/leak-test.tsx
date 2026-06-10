@@ -5,6 +5,7 @@ import { CheckCircle2, AlertOctagon, PhoneCall, Wind, Lightbulb, Flame } from "l
 import { AppShell } from "@/components/AppShell";
 import { AudioRecorder } from "@/components/AudioRecorder";
 import { analyzeLeakAudio } from "@/lib/safecylinder.functions";
+import { useI18n, LANG_NAMES_FOR_AI } from "@/lib/i18n";
 
 export const Route = createFileRoute("/leak-test")({
   head: () => ({
@@ -24,6 +25,7 @@ type LeakResult = {
 };
 
 function LeakTestPage() {
+  const { t, lang } = useI18n();
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<LeakResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -32,17 +34,17 @@ function LeakTestPage() {
     setBusy(true);
     setError(null);
     try {
-      const res = (await analyzeLeakAudio({ data: r })) as LeakResult;
+      const res = (await analyzeLeakAudio({ data: { ...r, language: LANG_NAMES_FOR_AI[lang] } })) as LeakResult;
       setResult(res);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Network error. Check your connection and try again.");
+      setError(e instanceof Error ? e.message : t("leak.networkError"));
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <AppShell title="Leak test" subtitle="Hold the phone near the regulator and stay quiet.">
+    <AppShell title={t("leak.title")} subtitle={t("leak.subtitle")}>
       <AudioRecorder onComplete={handleComplete} busy={busy} />
 
       {error && <p className="mt-4 rounded-xl border border-danger/40 bg-danger/10 p-3 text-sm text-danger">{error}</p>}
@@ -52,7 +54,7 @@ function LeakTestPage() {
           <ResultIndicator result={result} />
           {result.leak_detected && <EmergencySteps />}
           <div className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
-            <p className="font-semibold text-foreground mb-1">Acoustic notes</p>
+            <p className="font-semibold text-foreground mb-1">{t("leak.notes")}</p>
             <p>{result.frequency_notes}</p>
             <p className="mt-2">{result.recommendation}</p>
           </div>
@@ -63,34 +65,37 @@ function LeakTestPage() {
 }
 
 function ResultIndicator({ result }: { result: LeakResult }) {
+  const { t } = useI18n();
+  const conf = t(`confidence.${result.confidence}`);
   if (result.leak_detected) {
     return (
       <div className="rounded-2xl bg-card p-6 text-center status-stripe-danger">
         <AlertOctagon className="mx-auto h-14 w-14 text-danger" />
-        <p className="mt-3 font-display text-2xl font-bold text-danger">🔴 Possible Leak</p>
-        <p className="text-sm text-muted-foreground mt-1">Check immediately. Confidence: {result.confidence}.</p>
+        <p className="mt-3 font-display text-2xl font-bold text-danger">🔴 {t("leak.detected")}</p>
+        <p className="text-sm text-muted-foreground mt-1">{t("leak.detectedSub", { c: conf })}</p>
       </div>
     );
   }
   return (
     <div className="rounded-2xl bg-card p-6 text-center status-stripe-safe">
       <CheckCircle2 className="mx-auto h-14 w-14 text-safe" />
-      <p className="mt-3 font-display text-2xl font-bold text-safe">🟢 No Leak Detected</p>
-      <p className="text-sm text-muted-foreground mt-1">Confidence: {result.confidence}.</p>
+      <p className="mt-3 font-display text-2xl font-bold text-safe">🟢 {t("leak.safe")}</p>
+      <p className="text-sm text-muted-foreground mt-1">{t("leak.safeSub", { c: conf })}</p>
     </div>
   );
 }
 
 function EmergencySteps() {
+  const { t } = useI18n();
   const steps = [
-    { icon: Flame, text: "Turn off the cylinder knob immediately." },
-    { icon: Wind, text: "Open all windows and doors for ventilation." },
-    { icon: Lightbulb, text: "Do NOT switch lights or any electrical appliances on/off." },
-    { icon: PhoneCall, text: "Call the LPG emergency helpline 1906." },
+    { icon: Flame, text: t("leak.step1") },
+    { icon: Wind, text: t("leak.step2") },
+    { icon: Lightbulb, text: t("leak.step3") },
+    { icon: PhoneCall, text: t("leak.step4") },
   ];
   return (
     <div className="rounded-2xl border border-danger/40 bg-danger/10 p-5">
-      <p className="font-display text-lg font-bold text-danger mb-3">Emergency steps</p>
+      <p className="font-display text-lg font-bold text-danger mb-3">{t("leak.emergency")}</p>
       <ul className="space-y-3">
         {steps.map(({ icon: Icon, text }, i) => (
           <li key={i} className="flex items-start gap-3">
@@ -105,7 +110,7 @@ function EmergencySteps() {
         href="tel:1906"
         className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-danger py-3.5 font-display font-bold text-danger-foreground"
       >
-        <PhoneCall className="h-5 w-5" /> Call 1906
+        <PhoneCall className="h-5 w-5" /> {t("leak.call")}
       </a>
     </div>
   );
