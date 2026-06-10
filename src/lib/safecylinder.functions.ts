@@ -30,15 +30,16 @@ function extractJson(text: string): unknown {
 }
 
 export const analyzeCylinderImage = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ imageDataUrl: z.string().min(20) }))
+  .inputValidator(z.object({ imageDataUrl: z.string().min(20), language: z.string().optional() }))
   .handler(async ({ data }) => {
+    const lang = data.language || "English";
     const result = await callGateway({
       model: MODEL,
       messages: [
         {
           role: "system",
           content:
-            "You are an LPG cylinder safety expert. The user has photographed the test date ring on a domestic LPG cylinder. Extract the alphanumeric expiry/test code (format: letter + two digits, e.g., A27, C29, D31 — where the letter = quarter A/B/C/D and the number = year, two-digit). Quarter A = Jan-Mar, B = Apr-Jun, C = Jul-Sep, D = Oct-Dec. Cylinders expire at the END of their stamped quarter. Compute months_remaining from today. Return ONLY a JSON object with keys: code, quarter (1-4), year (4 digit), expiry_date (human string), is_expired (bool), months_remaining (int). If the code is unreadable, return {\"error\":\"unreadable\"}.",
+            `You are an LPG cylinder safety expert. The user has photographed the test date ring on a domestic LPG cylinder. Extract the alphanumeric expiry/test code (format: letter + two digits, e.g., A27, C29, D31 — where the letter = quarter A/B/C/D and the number = year, two-digit). Quarter A = Jan-Mar, B = Apr-Jun, C = Jul-Sep, D = Oct-Dec. Cylinders expire at the END of their stamped quarter. Compute months_remaining from today. Return ONLY a JSON object with keys: code, quarter (1-4), year (4 digit), expiry_date (human string in ${lang}), is_expired (bool), months_remaining (int). If the code is unreadable, return {"error":"unreadable"}.`,
         },
         {
           role: "user",
@@ -62,16 +63,18 @@ export const analyzeLeakAudio = createServerFn({ method: "POST" })
       rms: z.number(),
       peakFreqHz: z.number().optional(),
       durationSec: z.number(),
+      language: z.string().optional(),
     }),
   )
   .handler(async ({ data }) => {
+    const lang = data.language || "English";
     const result = await callGateway({
       model: MODEL,
       messages: [
         {
           role: "system",
           content:
-            "You are an acoustic safety analyst. The user held their phone near an LPG regulator for a few seconds to check for gas leaks. Analyse the audio and the supplied measurements to determine signs of a high-frequency hiss (500Hz–4kHz), irregular pressure sounds, or continuous airflow noise consistent with a gas leak. Be conservative — if uncertain, flag as possible leak. Return ONLY JSON with keys: leak_detected (bool), confidence ('low'|'medium'|'high'), frequency_notes (string), recommendation (string).",
+            `You are an acoustic safety analyst. The user held their phone near an LPG regulator for a few seconds to check for gas leaks. Analyse the audio and the supplied measurements to determine signs of a high-frequency hiss (500Hz–4kHz), irregular pressure sounds, or continuous airflow noise consistent with a gas leak. Be conservative — if uncertain, flag as possible leak. Return ONLY JSON with keys: leak_detected (bool), confidence ('low'|'medium'|'high'), frequency_notes (string), recommendation (string). Write the frequency_notes and recommendation strings in ${lang}.`,
         },
         {
           role: "user",
