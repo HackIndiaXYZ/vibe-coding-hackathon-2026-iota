@@ -1,7 +1,9 @@
 # 🔥 SafeCylinder — Smart LPG Expiry & Leak Monitor
 
 > **HackIndia Vibe Coding Hackathon 2026**
->  Track: 🧠 AI Native Apps + 🎓 Student Innovation  
+>  · Track: 🧠 AI Native Apps + 🎓 Student Innovation  
+
+
 ---
 
 ## 💡 The Idea
@@ -23,6 +25,7 @@ SafeCylinder turns your smartphone into a **10-second home safety inspector** �
 | Micro-leaks are inaudible to humans | Phone mic + audio AI detects high-frequency hiss (500Hz–4kHz) |
 | No reminders for cylinder replacement | Web push notification 30 days before expiry |
 | Emergency steps unknown | In-app card with 1906 helpline + step-by-step instructions |
+| App is English-only, excluding rural users | Full UI + AI responses in 10 Indian languages |
 
 ---
 
@@ -48,6 +51,26 @@ SafeCylinder turns your smartphone into a **10-second home safety inspector** �
 ### 🔔 Push Reminders
 - Web push notification 30 days before cylinder expiry
 - Works offline via Service Worker
+
+### 🇮🇳 Indian Language Support
+- Full UI available in **10 Indian languages**
+- Expiry results and leak warnings delivered in your preferred language
+- Emergency instructions localised — critical safety info reaches users who don't read English
+
+| Language | Script |
+|---|---|
+| हिंदी | Devanagari |
+| বাংলা | Bengali |
+| తెలుగు | Telugu |
+| मराठी | Devanagari |
+| தமிழ் | Tamil |
+| ગુજરાતી | Gujarati |
+| ಕನ್ನಡ | Kannada |
+| മലയാളം | Malayalam |
+| ਪੰਜਾਬੀ | Gurmukhi |
+| ଓଡ଼ିଆ | Odia |
+
+> Claude AI generates safety responses directly in the user's chosen language — no separate translation step needed.
 
 ---
 
@@ -77,6 +100,8 @@ Risk assessment + recommendation rendered
 
 No fine-tuning. No ML models. Just well-crafted prompts — the essence of vibe coding.
 
+> 🌐 **Language layer:** All Claude prompts include a `language` parameter. When a user selects Hindi, Odia, Tamil (or any of the 10 supported languages), the system prompt instructs Claude to respond entirely in that language — so the expiry result, leak assessment, and emergency steps all come back localised.
+
 ---
 
 ## 🛠️ Tech Stack
@@ -98,7 +123,7 @@ No fine-tuning. No ML models. Just well-crafted prompts — the essence of vibe 
 
 ## 🚀 Live Demo
 
-🔗 **[safecylinder.lovable.app](#)** *(replace with your published URL)*
+🔗 **https://lpg-guard-ai.lovable.app** 
 
 ### Demo Flow (2 minutes)
 1. Open app on mobile → see dashboard with cylinder list
@@ -138,7 +163,7 @@ If a leak is detected, the app shows:
 
 ## 👨‍💻 Built By
 
-Krishna Mohanty· HackIndia Vibe Coding Hackathon 2026  
+**Krishna** · HackIndia Vibe Coding Hackathon 2026  
 Bhubaneswar, Odisha, India
 
 ---
