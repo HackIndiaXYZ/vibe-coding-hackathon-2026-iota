@@ -11,7 +11,6 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { I18nProvider } from "../lib/i18n";
 
 function NotFoundComponent() {
   return (
@@ -81,10 +80,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "SafeCylinder — LPG Safety at Home" },
       { name: "description", content: "Scan LPG cylinder expiry codes and detect gas micro-leaks from your phone." },
       { name: "theme-color", content: "#0F1117" },
-      { property: "og:title", content: "SafeCylinder" },
-      { property: "og:description", content: "LPG cylinder expiry scanner and micro-leak detector for Indian homes." },
+      { property: "og:title", content: "SafeCylinder — LPG Safety at Home" },
+      { property: "og:description", content: "Scan LPG cylinder expiry codes and detect gas micro-leaks from your phone." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "SafeCylinder — LPG Safety at Home" },
+      { name: "twitter:description", content: "Scan LPG cylinder expiry codes and detect gas micro-leaks from your phone." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/6213956f-06ae-42ab-a3dd-a009ff2adf34" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/6213956f-06ae-42ab-a3dd-a009ff2adf34" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -122,10 +125,8 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <I18nProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-      </I18nProvider>
+      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <Outlet />
     </QueryClientProvider>
   );
 }
